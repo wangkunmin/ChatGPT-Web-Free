@@ -3,6 +3,8 @@ import 'isomorphic-fetch'
 import type { ChatGPTAPI, ChatMessage, SendMessageOptions } from 'chatgpt'
 import { ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { sendResponse } from './utils'
+import Authenticator from "openai-authenticator";
+const authenticator = new Authenticator();
 
 dotenv.config()
 
@@ -61,6 +63,8 @@ async function chatReply(
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
+    process.env.OPENAI_ACCESS_TOKEN = await authenticator.login(process.env.EMAIL, process.env.PASSWORD)
+    console.log("token=",process.env.OPENAI_ACCESS_TOKEN)
     return sendResponse({ type: 'Fail', message: error.message })
   }
 }
